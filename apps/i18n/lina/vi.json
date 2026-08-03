@@ -961,6 +961,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "Gợi ý: Nhà cung cấp dịch vụ xác thực (khuyên kích thước hình ảnh nên là: 64px*64px)",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "URL gọi lại",
     "ObjectNotFoundOrDeletedMsg": "Không tìm thấy tài nguyên tương ứng hoặc đã bị xóa",
     "ObjectStorage": "Lưu trữ đối tượng",
     "Offline": "Ngoại tuyến",

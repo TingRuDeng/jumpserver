@@ -962,6 +962,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "Dica: Provedor de Serviços de Autenticação (Tamanho da imagem recomendado: 64px*64px)",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "URL de callback",
     "ObjectNotFoundOrDeletedMsg": "Não foi encontrado o recurso correspondente ou foi excluído",
     "ObjectStorage": "Armazenamento de objeto",
     "Offline": "Offline",

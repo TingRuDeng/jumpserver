@@ -364,11 +364,11 @@ class Config(dict):
         # https://openid.net/specs/openid-connect-core-1_0.html#ClientAuthentication
         'AUTH_OPENID_CLIENT_AUTH_METHOD': 'client_secret_basic',
         'AUTH_OPENID_SHARE_SESSION': True,
-        'AUTH_OPENID_IGNORE_SSL_VERIFICATION': True,
+        'AUTH_OPENID_IGNORE_SSL_VERIFICATION': False,
         'AUTH_OPENID_USER_ATTR_MAP': {
             'name': 'name', 'username': 'preferred_username', 'email': 'email'
         },
-        'AUTH_OPENID_PKCE': False,
+        'AUTH_OPENID_PKCE': True,
         'AUTH_OPENID_CODE_CHALLENGE_METHOD': 'S256',
 
         # OpenID 新配置参数 (version >= 1.5.9)
@@ -378,7 +378,7 @@ class Config(dict):
         'AUTH_OPENID_PROVIDER_JWKS_ENDPOINT': 'https://oidc.example.com/jwks',
         'AUTH_OPENID_PROVIDER_USERINFO_ENDPOINT': 'https://oidc.example.com/userinfo',
         'AUTH_OPENID_PROVIDER_END_SESSION_ENDPOINT': 'https://oidc.example.com/logout',
-        'AUTH_OPENID_PROVIDER_SIGNATURE_ALG': 'HS256',
+        'AUTH_OPENID_PROVIDER_SIGNATURE_ALG': 'RS256',
         'AUTH_OPENID_PROVIDER_SIGNATURE_KEY': None,
         'AUTH_OPENID_SCOPES': 'openid profile email',
         'AUTH_OPENID_ID_TOKEN_MAX_AGE': 600,
@@ -824,35 +824,38 @@ class Config(dict):
 
         openid_config = copy.deepcopy(keycloak_config)
         auth_openid = openid_config.get('AUTH_OPENID')
+        auth_openid_keycloak = openid_config.get('AUTH_OPENID_KEYCLOAK')
         auth_openid_realm_name = openid_config.get('AUTH_OPENID_REALM_NAME')
         auth_openid_server_url = openid_config.get('AUTH_OPENID_SERVER_URL')
 
-        if not auth_openid:
+        if not auth_openid or not auth_openid_keycloak:
             return
 
-        if auth_openid and not auth_openid_realm_name:
-            # 开启的是标准 OpenID 配置，关掉 Keycloak 配置
-            openid_config.update({
-                'AUTH_OPENID_KEYCLOAK': False
-            })
-
-        if auth_openid_realm_name is None:
+        if not auth_openid_realm_name or not auth_openid_server_url:
             return
+
+        server_url = auth_openid_server_url.rstrip('/')
+        realm_name = quote(auth_openid_realm_name.strip(), safe='')
+        issuer = f'{server_url}/realms/{realm_name}'
 
         # # convert key # #
         compatible_config = {
-            'AUTH_OPENID_PROVIDER_ENDPOINT': auth_openid_server_url,
-
-            'AUTH_OPENID_PROVIDER_AUTHORIZATION_ENDPOINT': '/realms/{}/protocol/openid-connect/auth'
-                                                           ''.format(auth_openid_realm_name),
-            'AUTH_OPENID_PROVIDER_TOKEN_ENDPOINT': '/realms/{}/protocol/openid-connect/token'
-                                                   ''.format(auth_openid_realm_name),
-            'AUTH_OPENID_PROVIDER_JWKS_ENDPOINT': '/realms/{}/protocol/openid-connect/certs'
-                                                  ''.format(auth_openid_realm_name),
-            'AUTH_OPENID_PROVIDER_USERINFO_ENDPOINT': '/realms/{}/protocol/openid-connect/userinfo'
-                                                      ''.format(auth_openid_realm_name),
-            'AUTH_OPENID_PROVIDER_END_SESSION_ENDPOINT': '/realms/{}/protocol/openid-connect/logout'
-                                                         ''.format(auth_openid_realm_name)
+            'AUTH_OPENID_PROVIDER_ENDPOINT': issuer,
+            'AUTH_OPENID_PROVIDER_AUTHORIZATION_ENDPOINT':
+                f'{issuer}/protocol/openid-connect/auth',
+            'AUTH_OPENID_PROVIDER_TOKEN_ENDPOINT':
+                f'{issuer}/protocol/openid-connect/token',
+            'AUTH_OPENID_PROVIDER_JWKS_ENDPOINT':
+                f'{issuer}/protocol/openid-connect/certs',
+            'AUTH_OPENID_PROVIDER_USERINFO_ENDPOINT':
+                f'{issuer}/protocol/openid-connect/userinfo',
+            'AUTH_OPENID_PROVIDER_END_SESSION_ENDPOINT':
+                f'{issuer}/protocol/openid-connect/logout',
+            'AUTH_OPENID_PROVIDER_SIGNATURE_ALG': 'RS256',
+            'AUTH_OPENID_PKCE': True,
+            'AUTH_OPENID_CODE_CHALLENGE_METHOD': 'S256',
+            'AUTH_OPENID_USE_STATE': True,
+            'AUTH_OPENID_USE_NONCE': True,
         }
         for key, value in compatible_config.items():
             openid_config[key] = value
@@ -876,6 +879,7 @@ class Config(dict):
     def get_keycloak_config(self):
         keycloak_config = {
             'AUTH_OPENID': self.AUTH_OPENID,
+            'AUTH_OPENID_KEYCLOAK': self.AUTH_OPENID_KEYCLOAK,
             'AUTH_OPENID_REALM_NAME': self.AUTH_OPENID_REALM_NAME,
             'AUTH_OPENID_SERVER_URL': self.AUTH_OPENID_SERVER_URL,
             'AUTH_OPENID_PROVIDER_ENDPOINT': self.AUTH_OPENID_PROVIDER_ENDPOINT

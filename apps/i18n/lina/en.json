@@ -1031,6 +1031,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "Note: authentication provider (recommended image size: 64px*64px)",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "Callback URL",
     "ObjectNotFoundOrDeletedMsg": "No corresponding resources found or it has been deleted.",
     "ObjectStorage": "Object Storage",
     "Offline": "Offline",

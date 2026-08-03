@@ -1059,6 +1059,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "提示：认证服务提供商（建议图片大小为: 64px*64px）",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "回调地址",
     "ObjectNotFoundOrDeletedMsg": "没有找到对应资源或者已被删除",
     "ObjectStorage": "对象存储",
     "Offline": "离线",

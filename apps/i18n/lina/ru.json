@@ -962,6 +962,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "Примечание: провайдер аутентификации (рекомендуемый размер изображения: 64px*64px)",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "URL обратного вызова",
     "ObjectNotFoundOrDeletedMsg": "Соответствующие ресурсы не найдены или были удалены.",
     "ObjectStorage": "Хранилище объектов",
     "Offline": "Оффлайн",

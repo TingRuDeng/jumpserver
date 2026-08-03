@@ -966,6 +966,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "ヒント：認証サービスプロバイダ（推奨画像サイズ: 64px*64px）",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "コールバック URL",
     "ObjectNotFoundOrDeletedMsg": "該当するリソースが見つからないか削除されています",
     "ObjectStorage": "オブジェクトストレージ",
     "Offline": "オフライン",

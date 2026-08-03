@@ -8,8 +8,6 @@
 
 import datetime as dt
 from calendar import timegm
-from urllib.parse import urlparse
-
 from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.utils.encoding import force_bytes
@@ -18,6 +16,7 @@ from jwkest.jwk import KEYS
 from jwkest.jws import JWS
 
 from common.utils import get_logger
+from settings.utils.oidc import OIDCDiscoveryError, normalize_oidc_url
 
 logger = get_logger(__file__)
 
@@ -26,7 +25,7 @@ def validate_and_return_id_token(jws, nonce=None, validate_nonce=True):
     """ Validates the id_token according to the OpenID Connect specification. """
     log_prompt = "Validate ID Token: {}"
     logger.debug(log_prompt.format('Get shared key'))
-    shared_key = settings.AUTH_OPENID_CLIENT_ID \
+    shared_key = settings.AUTH_OPENID_CLIENT_SECRET \
         if settings.AUTH_OPENID_PROVIDER_SIGNATURE_ALG == 'HS256' \
         else settings.AUTH_OPENID_PROVIDER_SIGNATURE_KEY  # RS256
 
@@ -58,7 +57,8 @@ def _get_jwks_keys(shared_key):
     # Adds the shared key (which can correspond to the client_secret) as an oct key so it can be
     # used for HMAC signatures.
     logger.debug(log_prompt.format('Add key'))
-    jwks_keys.add({'key': force_bytes(shared_key), 'kty': 'oct'})
+    if shared_key:
+        jwks_keys.add({'key': force_bytes(shared_key), 'kty': 'oct'})
     logger.debug(log_prompt.format('End'))
     return jwks_keys
 
@@ -68,9 +68,14 @@ def _validate_claims(id_token, nonce=None, validate_nonce=True):
     log_prompt = "Validate claims: {}"
     logger.debug(log_prompt.format('Start'))
 
-    iss_parsed_url = urlparse(id_token['iss'])
-    provider_parsed_url = urlparse(settings.AUTH_OPENID_PROVIDER_ENDPOINT)
-    if iss_parsed_url.netloc != provider_parsed_url.netloc:
+    try:
+        issuer = normalize_oidc_url(id_token['iss'], 'ID token issuer')
+        provider = normalize_oidc_url(
+            settings.AUTH_OPENID_PROVIDER_ENDPOINT, 'OIDC provider endpoint'
+        )
+    except (KeyError, OIDCDiscoveryError) as exc:
+        raise SuspiciousOperation('Invalid issuer') from exc
+    if issuer != provider:
         logger.debug(log_prompt.format('Invalid issuer'))
         raise SuspiciousOperation('Invalid issuer')
 

@@ -111,7 +111,7 @@ class Setting(models.Model):
 
         from jumpserver.conf import Config
         config_names = [
-            'AUTH_OPENID', 'AUTH_OPENID_REALM_NAME',
+            'AUTH_OPENID', 'AUTH_OPENID_KEYCLOAK', 'AUTH_OPENID_REALM_NAME',
             'AUTH_OPENID_SERVER_URL', 'AUTH_OPENID_PROVIDER_ENDPOINT'
         ]
         # 获取当前 keycloak 配置

@@ -961,6 +961,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "提示: 인증 서비스 제공업체(추천 이미지 크기: 64px*64px)",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "콜백 URL",
     "ObjectNotFoundOrDeletedMsg": "해당 리소스가 없거나 이미 삭제됨",
     "ObjectStorage": "객체 저장소",
     "Offline": "오프라인",

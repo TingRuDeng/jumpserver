@@ -83,7 +83,7 @@ def check_user_property_is_correct(username, **properties):
 def get_auth_methods():
     return [
         {
-            'name': 'OpenID',
+            'name': 'Keycloak' if settings.AUTH_OPENID_KEYCLOAK else 'OpenID',
             'enabled': settings.AUTH_OPENID,
             'url': reverse('authentication:openid:login'),
             'logo': static('img/login_oidc_logo.png'),

@@ -4,3 +4,4 @@
 from .ldap import *
 from .common import *
 from .db import *
+from .oidc import *

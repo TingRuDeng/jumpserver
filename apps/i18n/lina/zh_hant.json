@@ -1000,6 +1000,7 @@
     "OAuth2": "OAuth2",
     "OAuth2LogoTip": "提示：認證服務提供商（建議圖片大小為: 64px*64px）",
     "OIDC": "OIDC",
+    "OIDCCallbackURL": "回調地址",
     "ObjectNotFoundOrDeletedMsg": "沒有找到對應資源或者已被刪除",
     "ObjectStorage": "物件儲存",
     "Offline": "離線",
